@@ -1,0 +1,25 @@
+{
+   "name": "com.doji.lively",
+   "version": "1.0.0",
+   "displayName": "Lively",
+   "description": "A plugin to stream to Twitch from within Unity applications.",
+   "dependencies":
+   {
+      "com.unity.webrtc": "3.0.0-pre.5",
+      "com.unity.nuget.newtonsoft-json": "3.2.1"
+   },
+   "author":
+   {
+      "name": "Doji Technologies",
+      "email": "support@doji-tech.com",
+      "url": "https://www.doji-tech.com/"
+   },
+   "samples":
+   [
+      {
+         "displayName": "Basic Sample",
+         "description": "Basic example on how to stream from a simple Unity scene.",
+         "path": "Samples~/01-BasicSample"
+      }
+   ]
+}

@@ -1,0 +1,18 @@
+{
+    "name": "Doji.TwitchStreaming.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:410617a2344a5f242adbdfb45d22dc3b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,16 @@
+{
+    "name": "Doji.TwitchStreaming.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:410617a2344a5f242adbdfb45d22dc3b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
