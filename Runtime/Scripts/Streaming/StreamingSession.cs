@@ -138,8 +138,7 @@ namespace TwitchStreaming {
                 throw new System.ArgumentException($"stream key can not be null or empty", nameof(StreamKey));
             }
 
-            string streamKeyPattern = @"^live_\d{1,8}_.{1,30}$";
-            if (!Regex.IsMatch(StreamKey, streamKeyPattern)) {
+            if (!StreamKey.StartsWith("live_")) {
                 throw new System.ArgumentException($"Invalid stream key: {StreamKey}", nameof(StreamKey));
             }
         }
