@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.WebRTC;
 using UnityEngine;
@@ -27,13 +28,24 @@ namespace TwitchStreaming {
                 return default;
             }
 
+            // non-documented way of getting WebRTC endpoints from traditional rtmp ingest endpoints
+            // may change at any time
             string offerUrl = ingestEndpoints.Ingests[0].UrlTemplate
                 .Replace("rtmp://", "https://")
                 .Replace("contribute", "webrtc")
                 .Replace("/app/", ":4443/offer")
                 .Replace("{stream_key}", "");
 
-            string offerJson = JsonConvert.SerializeObject(webRTCOffer, new Newtonsoft.Json.Converters.StringEnumConverter() { NamingStrategy = new LowerCaseNamingStrategy() });
+            string offerJson = JsonConvert.SerializeObject(
+                webRTCOffer,
+                new Newtonsoft.Json.Converters.StringEnumConverter() {
+                    NamingStrategy = new LowerCaseNamingStrategy()
+                }
+            );
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            // very hacky; force lower profile level (3.1 / 0x1f instead of 5.1 / 0x33)
+            offerJson = Regex.Replace(offerJson, @"profile-level-id=([0-9a-fA-F]{4})[0-9a-fA-F]{2}", "profile-level-id=${1}1f");
+#endif
             string base64Offer = Convert.ToBase64String(Encoding.UTF8.GetBytes(offerJson));
 
             var twitchOffer = new WebRTCOffer() {
@@ -45,13 +57,10 @@ namespace TwitchStreaming {
             };
 
             string postData = JsonConvert.SerializeObject(twitchOffer);
-            Debug.Log(postData);
+            Debug.Log(twitchOffer);
             WebRTCAnswer answer = await SendOfferAsync(offerUrl, postData);
             string answerJson = Encoding.UTF8.GetString(Convert.FromBase64String(answer.Answer));
             RTCSessionDescription result = JsonConvert.DeserializeObject<RTCSessionDescription>(answerJson);
-
-            Debug.Log("Answer");
-            Debug.Log(result.sdp);
             return result;
         }
 

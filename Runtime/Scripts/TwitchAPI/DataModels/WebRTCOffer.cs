@@ -17,6 +17,15 @@ namespace TwitchStreaming {
 
         [JsonProperty("maxBitrate")]
         public long MaxBitrate { get; set; }
+
+        public override string ToString() {
+            byte[] data = System.Convert.FromBase64String(Offer);
+            string offerJson = System.Text.Encoding.UTF8.GetString(data);
+
+            var definition = new { type = "", sdp = "" };
+            var offer = JsonConvert.DeserializeAnonymousType(offerJson, definition);
+            return $"Type: {offer.type}\nSdp: {offer.sdp}";
+        }
     }
 
     internal partial class MaxResolution {
