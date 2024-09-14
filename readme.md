@@ -1,7 +1,6 @@
-# Twitch Streaming
+<a href="https://www.doji-tech.com/">
+  <img src="https://www.doji-tech.com/assets/favicon.ico" alt="doji logo" title="Doji" align="right" height="70" />
+</a>
 
-A [WebRTC](https://github.com/Unity-Technologies/com.unity.webrtc)-based plugin to stream to Twitch from within Unity applications.
-
-## Supported Platforms
-
-- Android
+# Lively
+Stream virtual content directly to Twitch from inside your Unity application.
