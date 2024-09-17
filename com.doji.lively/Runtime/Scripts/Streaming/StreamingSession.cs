@@ -1,56 +1,106 @@
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.WebRTC;
 using UnityEngine;
 
 namespace TwitchStreaming {
 
+    public struct CameraSettings {
+
+        public int Width;
+        public int Height;
+
+        public CameraSettings(int width = 1280, int height = 720) {
+            Width = width;
+            Height = height;
+        }
+    }
+
     /// <summary>
-    /// Initiates a streaming session for a given twitch channel.
+    /// Streams the output of a <see cref="UnityEngine.Camera"/> to a twitch channel.
     /// </summary>
-    public class StreamingSession : MonoBehaviour {
-
-        public bool AutoStartStream = false;
-
-        public string StreamKey;
+    public class CameraStreamingSession : StreamingSession {
 
         /// <summary>
         /// The Camera to stream video from.
         /// </summary>
-        public Camera Camera;
+        public Camera Camera { get; private set; }
+
+        public CameraSettings Settings { get; private set; }
+
+        public CameraStreamingSession(string streamKey, Camera camera, CameraSettings settings) : base(streamKey) {
+            Camera = camera;
+            Settings = settings;
+            MediaStream mediaStream = Camera.CaptureStream(Settings.Width, Settings.Height);
+            VideoTrack = mediaStream.GetVideoTracks().First();
+            if (Camera.TryGetComponent(out AudioListener audioListener)) {
+                AudioTrack = new AudioStreamTrack(audioListener);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Streams the contents of a <see cref="RenderTexture"/> to a twitch channel.
+    /// </summary>
+    public class RTStreamingSession : StreamingSession {
+
+        public RTStreamingSession(string streamKey, RenderTexture renderTexture) : base(streamKey) {
+            //var format = WebRTC.GetSupportedRenderTextureFormat(SystemInfo.graphicsDeviceType);
+            //var rt = new RenderTexture(width, height, 0, format);
+            var track = new VideoStreamTrack(renderTexture, Graphics.Blit);
+        }
+    }
+
+    public abstract class StreamingSession : IDisposable {
+
+        private static Coroutine _updateCoroutine;
+
+        public StreamingSession(string streamKey) {
+            _updateCoroutine ??= UnityHelper.Instance.StartCoroutine(WebRTC.Update());
+            UnityHelper.OnApplicationPauseEvent += OnApplicationPause;
+            StreamKey = streamKey;
+            ValidateStreamKey();
+        }
+
+        public static StreamingSession Create(string streamKey, Camera camera, CameraSettings settings) {
+            if (camera == null) {
+                throw new ArgumentNullException("Camera for streaming can not be null", nameof(camera));
+            }
+
+            return new CameraStreamingSession(streamKey, camera, settings);
+        }
+
+        public static StreamingSession Create(string streamKey, RenderTexture renderTexture) {
+            if (renderTexture == null) {
+                throw new ArgumentNullException("RenderTexture for streaming can not be null", nameof(renderTexture));
+            }
+            return new RTStreamingSession(streamKey, renderTexture);
+        }
+
+
+        public string StreamKey { get; private set; }
 
         /// <summary>
-        /// The (optional) AudioListener to stream audio from.
+        /// Holds the WebRTC connection to a Twitch Ingestion server.
         /// </summary>
-        public AudioListener AudioListener;
+        public RTCPeerConnection PeerConnection { get; private set; }
 
-        public int Width = 1280;
-        public int Height = 720;
+        /// <summary>
+        /// The VideoTrack to send.
+        /// </summary>
+        public VideoStreamTrack VideoTrack { get; protected set; }
 
-        public RTCPeerConnection PeerConnection { get; set; }
-        public VideoStreamTrack VideoTrack { get; set; }
-        public AudioStreamTrack AudioTrack { get; set; }
-
+        /// <summary>
+        /// Optional AudioTrack
+        /// </summary>
+        public AudioStreamTrack AudioTrack { get; protected set; }
 
         private RTCConfiguration _configuration = new RTCConfiguration() {
             iceServers = new RTCIceServer[] { new RTCIceServer { urls = new string[] { "stun:stun.l.google.com:19302" } } }
         };
 
-        private async void Start() {
-            if (AutoStartStream) {
-                await StartStreaming();
-            }
-        }
-
         public async Task StartStreaming() {
-            if (Camera == null) {
-                throw new InvalidOperationException("No valid camera found to start streaming from");
-            }
-
-            ValidateStreamKey();
-
             await CreateOfferAsync();
         }
 
@@ -101,17 +151,11 @@ namespace TwitchStreaming {
                 OnIceConnectionChange = OnIceConnectionChange
             };
 
-            MediaStream mediaStream = Camera.CaptureStream(Width, Height);
-
-            VideoTrack = mediaStream.GetVideoTracks().First();
             var v = peerConnection.AddTrack(VideoTrack);
 
-            if (AudioListener != null) {
-                AudioTrack = new AudioStreamTrack(AudioListener);
+            if (AudioTrack != null) {
                 peerConnection.AddTrack(AudioTrack);
             }
-
-            StartCoroutine(WebRTC.Update());
 
             return peerConnection;
         }
@@ -135,12 +179,17 @@ namespace TwitchStreaming {
 
         private void ValidateStreamKey() {
             if (string.IsNullOrEmpty(StreamKey)) {
-                throw new System.ArgumentException($"stream key can not be null or empty", nameof(StreamKey));
+                throw new ArgumentException($"stream key can not be null or empty", nameof(StreamKey));
             }
 
             if (!StreamKey.StartsWith("live_")) {
-                throw new System.ArgumentException($"Invalid stream key: {StreamKey}", nameof(StreamKey));
+                throw new ArgumentException($"Invalid stream key: {StreamKey}", nameof(StreamKey));
             }
+        }
+
+        public void Dispose() {
+            UnityHelper.OnApplicationPauseEvent -= OnApplicationPause;
+            PeerConnection.Dispose();
         }
     }
 }
