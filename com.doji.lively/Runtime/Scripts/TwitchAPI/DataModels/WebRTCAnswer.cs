@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     internal partial class WebRTCAnswer {
         [JsonProperty("answer")]

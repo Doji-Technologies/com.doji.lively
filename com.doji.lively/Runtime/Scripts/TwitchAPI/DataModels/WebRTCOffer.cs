@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     internal partial class WebRTCOffer {
         [JsonProperty("offer")]

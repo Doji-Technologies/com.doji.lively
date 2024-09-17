@@ -1,5 +1,5 @@
 {
-    "name": "Doji.TwitchStreaming.Samples",
+    "name": "Doji.Lively.Samples",
     "rootNamespace": "",
     "references": [
         "GUID:410617a2344a5f242adbdfb45d22dc3b"

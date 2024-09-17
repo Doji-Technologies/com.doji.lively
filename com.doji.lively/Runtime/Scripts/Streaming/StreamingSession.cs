@@ -2,9 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.WebRTC;
+using UnityEditor;
 using UnityEngine;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     public struct CameraSettings {
 
@@ -12,6 +13,9 @@ namespace TwitchStreaming {
         public int Height;
 
         public CameraSettings(int width = 1280, int height = 720) {
+            if (width % 16 != 0 || height % 16 != 0) {
+                throw new ArgumentException($"Width/Height must be 16-pixel aligned. Was {width}x{height}.");
+            }
             Width = width;
             Height = height;
         }

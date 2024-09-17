@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace TwitchStreaming {
+namespace Doji.Lively.Samples {
 
     /// <summary>
     /// Initiates a streaming session for a given twitch channel.

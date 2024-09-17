@@ -1,12 +1,10 @@
 {
-    "name": "Doji.TwitchStreaming.Editor",
+    "name": "Doji.Lively",
     "rootNamespace": "",
     "references": [
-        "GUID:410617a2344a5f242adbdfb45d22dc3b"
+        "GUID:f12aafacab75a87499e7e45c873ffab8"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

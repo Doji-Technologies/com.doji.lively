@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     /// <summary>
     /// A helper object that manages various Unity-specific tasks (coroutines, lifecycle events, etc.).

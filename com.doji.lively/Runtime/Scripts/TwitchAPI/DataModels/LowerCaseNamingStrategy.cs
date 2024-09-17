@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Serialization;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     /// <summary>A lower case naming strategy.</summary>
     internal class LowerCaseNamingStrategy : NamingStrategy {

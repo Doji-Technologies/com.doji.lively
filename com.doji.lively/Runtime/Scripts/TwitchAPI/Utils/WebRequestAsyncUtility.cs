@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Text;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     internal static class WebRequestAsyncUtility {
 

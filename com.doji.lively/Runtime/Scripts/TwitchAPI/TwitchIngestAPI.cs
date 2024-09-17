@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.WebRTC;
 using UnityEngine;
-using static TwitchStreaming.WebRequestAsyncUtility;
+using static Doji.Lively.WebRequestAsyncUtility;
 
-namespace TwitchStreaming {
+namespace Doji.Lively {
 
     internal static class TwitchIngestAPI {
 
