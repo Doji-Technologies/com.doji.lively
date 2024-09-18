@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.WebRTC;
-using UnityEditor;
 using UnityEngine;
 
 namespace Doji.Lively {
@@ -45,14 +44,12 @@ namespace Doji.Lively {
     }
 
     /// <summary>
-    /// Streams the contents of a <see cref="RenderTexture"/> to a twitch channel.
+    /// Streams the contents of a <see cref="Texture"/> to a twitch channel.
     /// </summary>
-    public class RTStreamingSession : StreamingSession {
+    public class TextureStreamingSession : StreamingSession {
 
-        public RTStreamingSession(string streamKey, RenderTexture renderTexture) : base(streamKey) {
-            //var format = WebRTC.GetSupportedRenderTextureFormat(SystemInfo.graphicsDeviceType);
-            //var rt = new RenderTexture(width, height, 0, format);
-            var track = new VideoStreamTrack(renderTexture, Graphics.Blit);
+        public TextureStreamingSession(string streamKey, Texture texture) : base(streamKey) {
+            var track = new VideoStreamTrack(texture, Graphics.Blit);
         }
     }
 
@@ -71,17 +68,15 @@ namespace Doji.Lively {
             if (camera == null) {
                 throw new ArgumentNullException("Camera for streaming can not be null", nameof(camera));
             }
-
             return new CameraStreamingSession(streamKey, camera, settings);
         }
 
-        public static StreamingSession Create(string streamKey, RenderTexture renderTexture) {
-            if (renderTexture == null) {
-                throw new ArgumentNullException("RenderTexture for streaming can not be null", nameof(renderTexture));
+        public static StreamingSession Create(string streamKey, Texture texture) {
+            if (texture == null) {
+                throw new ArgumentNullException("Texture for streaming can not be null", nameof(texture));
             }
-            return new RTStreamingSession(streamKey, renderTexture);
+            return new TextureStreamingSession(streamKey, texture);
         }
-
 
         public string StreamKey { get; private set; }
 
