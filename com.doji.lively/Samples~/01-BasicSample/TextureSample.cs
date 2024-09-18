@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Doji.Lively.Samples {
 
     /// <summary>
-    /// Initiates a streaming session for a given twitch channel.
+    /// Initiates a streaming session for a given twitch channel using a Texture.
     /// </summary>
-    public class BasicSample : MonoBehaviour {
+    public class TextureSample : MonoBehaviour {
 
         public bool AutoStartStream = false;
 
@@ -17,7 +15,7 @@ namespace Doji.Lively.Samples {
         /// <summary>
         /// The Camera to stream video from.
         /// </summary>
-        public Camera Camera;
+        public RenderTexture RT;
 
         public int Width = 1280;
         public int Height = 720;
@@ -25,7 +23,7 @@ namespace Doji.Lively.Samples {
         private StreamingSession _session;
 
         private async void Start() {
-            _session = StreamingSession.Create(StreamKey, Camera, new CameraSettings(Width, Height));
+            _session = StreamingSession.Create(StreamKey, RT);
 
             if (AutoStartStream) {
                 try {
@@ -37,7 +35,7 @@ namespace Doji.Lively.Samples {
         }
 
         private void OnDestroy() {
-            _session.Dispose();
+            _session?.Dispose();
         }
     }
 }
