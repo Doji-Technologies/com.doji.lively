@@ -49,7 +49,7 @@ namespace Doji.Lively {
     public class TextureStreamingSession : StreamingSession {
 
         public TextureStreamingSession(string streamKey, Texture texture) : base(streamKey) {
-            var track = new VideoStreamTrack(texture, Graphics.Blit);
+            VideoTrack = new VideoStreamTrack(texture, Graphics.Blit);
         }
     }
 
