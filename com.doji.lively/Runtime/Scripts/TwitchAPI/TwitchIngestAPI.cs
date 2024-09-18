@@ -19,20 +19,23 @@ namespace Doji.Lively {
             IngestEndpoints ingestEndpoints = await GetEndpointsAsync();
 
             if (ingestEndpoints == null) {
-                return default;
+                throw new InvalidOperationException("Unable to get ingest endpoints.");
             }
             if (ingestEndpoints.Ingests == null) {
-                return default;
+                throw new InvalidOperationException("Unable to get ingest endpoints.");
             }
             if (ingestEndpoints.Ingests.Length == 0) {
-                return default;
+                throw new InvalidOperationException("Ingest endpoints request did no return any results.");
             }
 
-            // non-documented way of getting WebRTC endpoints from traditional rtmp ingest endpoints
-            // may change at any time
-            string offerUrl = ingestEndpoints.Ingests[0].UrlTemplate
+            // undocumented way of getting WebRTC endpoints from traditional rtmp ingest endpoints
+            // may change at any time,
+            // Note that there is also a newer (global?) API endpoint for directly doing the WebRTC handshake
+            // at https://g.webrtc.live-video.net:4443/v2/offer (takes stream key as Bearer token instead)
+            // May want to switch to that at some point
+            string offerUrl = Regex.Replace(ingestEndpoints.Ingests[0].UrlTemplate, @"(rtmp://[^.]+)\.([^.]+)\.([^.]+)", "$1.webrtc.$3");
+            offerUrl = offerUrl
                 .Replace("rtmp://", "https://")
-                .Replace("contribute", "webrtc")
                 .Replace("/app/", ":4443/offer")
                 .Replace("{stream_key}", "");
 
