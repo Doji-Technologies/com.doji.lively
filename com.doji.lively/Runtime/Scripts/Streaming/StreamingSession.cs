@@ -150,11 +150,10 @@ namespace Doji.Lively {
                 OnIceConnectionChange = OnIceConnectionChange
             };
 
-            var v = peerConnection.AddTrack(VideoTrack);
-
-            if (AudioTrack != null) {
-                peerConnection.AddTrack(AudioTrack);
-            }
+            peerConnection.AddTrack(VideoTrack);
+            // without an AudioTrack the WebRTC handshake will fail with "SDP offer does not support mandatory Opus codec"
+            AudioTrack ??= new AudioStreamTrack();
+            peerConnection.AddTrack(AudioTrack);
 
             return peerConnection;
         }
@@ -188,7 +187,9 @@ namespace Doji.Lively {
 
         public void Dispose() {
             UnityHelper.OnApplicationPauseEvent -= OnApplicationPause;
-            PeerConnection.Dispose();
+            PeerConnection?.Dispose();
+            VideoTrack?.Dispose();
+            AudioTrack?.Dispose();
         }
     }
 }
