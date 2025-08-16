@@ -19,13 +19,13 @@ namespace Doji.Lively {
             IngestEndpoints ingestEndpoints = await GetEndpointsAsync();
 
             if (ingestEndpoints == null) {
-                throw new InvalidOperationException("Unable to get ingest endpoints.");
+                throw new NullReferenceException("Unable to get ingest endpoints.");
             }
             if (ingestEndpoints.Ingests == null) {
-                throw new InvalidOperationException("Unable to get ingest endpoints.");
+                throw new NullReferenceException("No ingest endpoints available.");
             }
             if (ingestEndpoints.Ingests.Length == 0) {
-                throw new InvalidOperationException("Ingest endpoints request did no return any results.");
+                throw new Exception("Ingest endpoints request did no return any results.");
             }
 
             // undocumented way of getting WebRTC endpoints from traditional rtmp ingest endpoints
